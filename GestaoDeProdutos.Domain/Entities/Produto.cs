@@ -10,6 +10,7 @@ namespace GestaoDeProdutos.Domain.Entities
     {
         #region - Propriedades
 
+        public int Codigo { get; private set; }
         public string Nome { get; private set; }
         public int Estoque { get; private set; }
         public decimal Valor { get; private set; }
@@ -20,8 +21,9 @@ namespace GestaoDeProdutos.Domain.Entities
 
         #region - Construtores
 
-        public Produto(string nome, int estoque, decimal valor, bool ativo, DateTime dataCadastro)
+        public Produto(int codigo, string nome, int estoque, decimal valor, bool ativo, DateTime dataCadastro)
         {
+            Codigo = codigo;
             Nome = nome;
             Estoque = estoque;
             Valor = valor;
