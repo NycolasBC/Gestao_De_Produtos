@@ -1,5 +1,7 @@
-﻿using GestaoDeProdutos.Application.Interfaces;
+﻿using AutoMapper;
+using GestaoDeProdutos.Application.Interfaces;
 using GestaoDeProdutos.Application.ViewModels;
+using GestaoDeProdutos.Domain.Entities;
 using GestaoDeProdutos.Domain.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -11,23 +13,52 @@ namespace GestaoDeProdutos.Application.Services
 {
     public class ProdutoService : IProdutoService
     {
-        private readonly IProdutoRepository _produtoRepository;
+        #region Construtores
 
-        public ProdutoService(IProdutoRepository produtoRepository)
+        private readonly IProdutoRepository _produtoRepository;
+        private IMapper _mapper;
+
+        public ProdutoService(IProdutoRepository produtoRepository, IMapper mapper)
         {
             _produtoRepository = produtoRepository;
+            _mapper = mapper;
         }
 
-        public void Adiconar(NovoProdutoViewModel novoProdutoViewModel)
+        #endregion
+
+        #region Funções
+
+        public void AdicionarProduto(NovoProdutoViewModel produto)
         {
-            _produtoRepository.AdicionarProduto(new Domain.Entities.Produto(
-                novoProdutoViewModel.Codigo,
-                novoProdutoViewModel.Nome,
-                novoProdutoViewModel.Estoque,
-                novoProdutoViewModel.Valor,
-                novoProdutoViewModel.Ativo,
-                novoProdutoViewModel.DataCadastro
-                ));
+            var novoProduto = _mapper.Map<Produto>(produto);
+            _produtoRepository.AdicionarProduto(novoProduto);
         }
+
+        public void AtivarProduto()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Atualizar(ProdutoViewModel produto)
+        {
+            throw new NotImplementedException();
+        }
+
+        public ProdutoViewModel ObterProdutoPorId(int id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IList<ProdutoViewModel> ObterTodosProdutos()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void ReativarProduto()
+        {
+            throw new NotImplementedException();
+        }
+
+        #endregion
     }
 }

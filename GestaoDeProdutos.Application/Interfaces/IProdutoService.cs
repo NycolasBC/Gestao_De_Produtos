@@ -9,6 +9,11 @@ namespace GestaoDeProdutos.Application.Interfaces
 {
     public interface IProdutoService
     {
-        public void Adiconar(NovoProdutoViewModel novoProdutoViewModel);
+        public void AdicionarProduto(NovoProdutoViewModel produto);
+        public void Atualizar(ProdutoViewModel produto);
+        public IList<ProdutoViewModel> ObterTodosProdutos();
+        public ProdutoViewModel ObterProdutoPorId(int id);
+        public void AtivarProduto();
+        public void ReativarProduto();
     }
 }

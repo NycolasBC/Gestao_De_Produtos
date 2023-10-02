@@ -7,7 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\GestaoDeProduto.Data\GestaoDeProduto.Data.csproj" />
+    <PackageReference Include="AutoMapper.Collection.LinqToSQL" Version="7.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\GestaoDeProdutos.Domain\GestaoDeProdutos.Domain.csproj" />
   </ItemGroup>
 
