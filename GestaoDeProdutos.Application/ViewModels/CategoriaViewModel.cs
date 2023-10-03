@@ -6,16 +6,12 @@ using System.Threading.Tasks;
 
 namespace GestaoDeProdutos.Application.ViewModels
 {
-    public class ProdutoViewModel
+    public class CategoriaViewModel
     {
         #region - Propriedades
 
         public int Codigo { get; set; }
-        public string Nome { get; set; }
-        public int Estoque { get; set; }
-        public decimal Valor { get; set; }
-        public bool Ativo { get; set; }
-        public DateTime DataCadastro { get; set; }
+        public string Descricao { get; set; }
 
         #endregion
     }

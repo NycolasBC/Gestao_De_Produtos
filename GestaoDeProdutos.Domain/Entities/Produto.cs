@@ -31,17 +31,6 @@ namespace GestaoDeProdutos.Domain.Entities
             DataCadastro = dataCadastro;
         }
 
-        public Produto(string nome, int estoque, decimal valor, bool ativo, DateTime dataCadastro)
-        {
-            Nome = nome;
-            Estoque = estoque;
-            Valor = valor;
-            Ativo = ativo;
-            DataCadastro = dataCadastro;
-        }
-
-
-
         #endregion
 
         #region - Comportamentos

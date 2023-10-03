@@ -19,6 +19,12 @@ builder.Services.AddAutoMapper(typeof(DomainToApplication), typeof(ApplicationTo
 builder.Services.AddScoped<IProdutoRepository, ProdutoRepository>();
 builder.Services.AddScoped<IProdutoService, ProdutoService>();
 
+builder.Services.AddScoped<ICategoriaRepository, CategoriaRepository>();
+builder.Services.AddScoped<ICategoriaService, CategoriaService>();
+
+builder.Services.AddScoped<IFornecedorRepository, FornecedorRepository>();
+builder.Services.AddScoped<IFornecedorService, FornecedorService>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

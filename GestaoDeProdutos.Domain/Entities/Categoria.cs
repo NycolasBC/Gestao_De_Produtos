@@ -8,10 +8,10 @@ namespace GestaoDeProdutos.Domain.Entities
 {
     public class Categoria
     {
-        #region Propriedades
+        #region - Propriedades
 
-        public int Codigo { get; private set; }
-        public string Descricao { get; private set; }
+        public int Codigo { get; set; }
+        public string Descricao { get; set; }
 
         #endregion
 
@@ -21,6 +21,10 @@ namespace GestaoDeProdutos.Domain.Entities
         {
             Codigo = codigo;
             Descricao = descricao;
+        }
+
+        public Categoria()
+        {
         }
 
         #endregion

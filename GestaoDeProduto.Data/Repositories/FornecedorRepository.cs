@@ -1,5 +1,6 @@
 ﻿using GestaoDeProdutos.Domain.Entities;
 using GestaoDeProdutos.Domain.Interfaces;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -27,28 +28,80 @@ namespace GestaoDeProduto.Data.Repositories
         {
             List<Fornecedor> fornecedores = new List<Fornecedor>();
             int proximoCodigo = ObterProximoCodigoDisponivel();
-            fornecedores.Add(fornecedor);
+
+            Fornecedor fornecedorAtualizado = new Fornecedor()
+            {
+                Codigo = proximoCodigo,
+                RazaoSocial = fornecedor.RazaoSocial,
+                CNPJ = fornecedor.CNPJ,
+                Ativo = fornecedor.Ativo,
+                DataCadastro = DateTime.Now,
+                EmailContato = fornecedor.EmailContato
+            };
+
+            fornecedores.Add(fornecedorAtualizado);
             EscreveFornecedoresNoArquivo(fornecedores);
         }
 
-        public void AtualizarFornecedor(Fornecedor categoria)
+        public void AtualizarFornecedor(Fornecedor fornecedor, int id)
         {
-            throw new NotImplementedException();
+            List<Fornecedor> fornecedores = LerFornecedoresDoArquivo();
+
+            int index = fornecedores.FindIndex(c => c.Codigo == id);
+            if (index != -1)
+            {
+                Fornecedor fornecedorAtualizado = new Fornecedor()
+                {
+                    Codigo = id,
+                    RazaoSocial = fornecedor.RazaoSocial,
+                    CNPJ = fornecedor.CNPJ,
+                    Ativo = fornecedor.Ativo,
+                    DataCadastro = DateTime.Now,
+                    EmailContato = fornecedor.EmailContato
+                };
+
+                fornecedores[index] = fornecedorAtualizado;
+                EscreveFornecedoresNoArquivo(fornecedores);
+            }
         }
 
-        public void RemoverFornecedor(Fornecedor categoria)
+        public void RemoverFornecedor(int id)
         {
-            throw new NotImplementedException();
+            List<Fornecedor> fornecedor = LerFornecedoresDoArquivo();
+
+            if (fornecedor.Any())
+            {
+                Fornecedor fornecedorDescartado = fornecedor.Find(c => c.Codigo == id);
+                if (fornecedorDescartado != null)
+                {
+                    fornecedor.Remove(fornecedorDescartado);
+                    EscreveFornecedoresNoArquivo(fornecedor);
+                }
+            }
         }
 
         public IList<Fornecedor> ObterTodosFornecedores()
         {
-            throw new NotImplementedException();
+            List<Fornecedor> fornecedores = LerFornecedoresDoArquivo();
+            return fornecedores;
         }
 
         public Fornecedor ObterFornecedorPorId(int id)
         {
-            throw new NotImplementedException();
+            List<Fornecedor> fornecedores = LerFornecedoresDoArquivo();
+
+            if (!fornecedores.Any())
+            {
+                return null;
+            }
+
+            Fornecedor fornecedorProcurado = fornecedores.Find(c => c.Codigo == id);
+            if (fornecedorProcurado == null)
+            {
+                return null;
+            }
+
+            return fornecedorProcurado;
         }
 
         #endregion
@@ -78,7 +131,7 @@ namespace GestaoDeProduto.Data.Repositories
             }
         }
 
-        private void EscreveFornecedoresNoArquivo(Fornecedor fornecedor)
+        private void EscreveFornecedoresNoArquivo(List<Fornecedor> fornecedor)
         {
             string json = JsonConvert.SerializeObject(fornecedor);
             System.IO.File.WriteAllText(_fornecedorCaminhoArquivo, json);

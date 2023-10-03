@@ -8,14 +8,14 @@ namespace GestaoDeProdutos.Domain.Entities
 {
     public class Fornecedor
     {
-        #region Propriedades
+        #region - Propriedades
 
-        public int Codigo { get; private set; }
-        public string RazaoSocial { get; private set; }
-        public string CNPJ { get; private set; }
-        public bool Ativo { get; private set; }
-        public DateTime DataCadastro { get; private set; }
-        public string EmailContato { get; private set; }
+        public int Codigo { get; set; }
+        public string RazaoSocial { get; set; }
+        public string CNPJ { get; set; }
+        public bool Ativo { get; set; }
+        public DateTime DataCadastro { get; set; }
+        public string EmailContato { get; set; }
 
         #endregion
 
@@ -29,6 +29,10 @@ namespace GestaoDeProdutos.Domain.Entities
             Ativo = ativo;
             DataCadastro = dataCadastro;
             EmailContato = emailContato;
+        }
+
+        public Fornecedor()
+        {
         }
 
         #endregion
