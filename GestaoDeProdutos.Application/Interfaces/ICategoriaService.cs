@@ -10,10 +10,10 @@ namespace GestaoDeProdutos.Application.Interfaces
 {
     public interface ICategoriaService
     {
-        public bool AdicionarCategoria(NovaCategoriaViewModel categoria);
-        public bool AtualizarCategoria(CategoriaViewModel categoria, int id);
-        public bool RemoverCategoria(int id);
-        public List<CategoriaViewModel> ObterTodasCategorias();
-        public CategoriaViewModel ObterCategoriaPorId(int id);
+        IEnumerable<CategoriaViewModel> ObterTodas();
+        Task<CategoriaViewModel> ObterPorId(Guid id);
+
+        Task Adicionar(NovaCategoriaViewModel categoriaViewModel);
+        void Atualizar(NovaCategoriaViewModel categoriaViewModel);
     }
 }

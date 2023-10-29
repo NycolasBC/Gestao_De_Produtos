@@ -1,4 +1,7 @@
-﻿using GestaoDeProdutos.Domain.Entities;
+﻿using AutoMapper;
+using GestaoDeProduto.Data.Providers.MongoDb.Collections;
+using GestaoDeProduto.Data.Providers.MongoDb.Interfaces;
+using GestaoDeProdutos.Domain.Entities;
 using GestaoDeProdutos.Domain.Interfaces;
 using Newtonsoft.Json;
 using System;
@@ -11,82 +14,123 @@ namespace GestaoDeProduto.Data.Repositories
 {
     public class ProdutoRepository : IProdutoRepository
     {
-        #region - Atributos e Construtor
+        private readonly IMongoRepository<ProdutoCollection> _produtoRepository;
+        private readonly IMapper _mapper;
 
-        private readonly string _produtoCaminhoArquivo;
+        #region - Construtores
 
-        public ProdutoRepository()
+        public ProdutoRepository(IMongoRepository<ProdutoCollection> produtoRepository, IMapper mapper)
         {
-            _produtoCaminhoArquivo = Path.Combine(Directory.GetCurrentDirectory(), "FileJsonData", "produto.json");
+            _produtoRepository = produtoRepository;
+            _mapper = mapper;
         }
 
         #endregion
 
-        #region - Funções de repositorio
+        #region - Funções
 
-        public void AdicionarProduto(Produto produto)
+        public async Task Adicionar(Produto produto)
         {
-            List<Produto> produtos = new List<Produto>();
-            int proximoCodigo = ObterProximoCodigoDisponivel();
-            produtos.Add(produto);
-            EscreverProdutosNoArquivo(produtos);
+            await _produtoRepository.InsertOneAsync(_mapper.Map<ProdutoCollection>(produto));
         }
 
-        public void AtivarProduto()
+        public async Task Atualizar(Produto produto)
+        {
+            var buscaProduto = _produtoRepository.FilterBy(filter => filter.CodigoId == produto.CodigoId);
+
+            if (buscaProduto == null) throw new ApplicationException("Não é possível alterar um produto que não existe");
+
+            var produtoCollection = _mapper.Map<ProdutoCollection>(produto);
+
+            produtoCollection.Id = buscaProduto.FirstOrDefault().Id;
+
+            await _produtoRepository.ReplaceOneAsync(_mapper.Map<ProdutoCollection>(produto));
+        }
+
+        public async Task AlterarPreco(Produto produto)
+        {
+
+            var buscaProduto = _produtoRepository.FilterBy(filter => filter.CodigoId == produto.CodigoId);
+
+            if (buscaProduto == null) throw new ApplicationException("Não é possível alterar o preço de um produto que não existe");
+
+            var produtoCollection = _mapper.Map<ProdutoCollection>(produto);
+
+            produtoCollection.Id = buscaProduto.FirstOrDefault().Id;
+
+            await _produtoRepository.ReplaceOneAsync(produtoCollection);
+        }
+
+        public async Task AtualizarEstoque(Produto produto)
+        {
+            var buscaProduto = _produtoRepository.FilterBy(filter => filter.CodigoId == produto.CodigoId);
+
+            if (buscaProduto == null) throw new ApplicationException("Não é possível alterar o estoque de um produto que não existe");
+
+            var produtoCollection = _mapper.Map<ProdutoCollection>(produto);
+
+            produtoCollection.Id = buscaProduto.FirstOrDefault().Id;
+
+            await _produtoRepository.ReplaceOneAsync(produtoCollection);
+        }
+
+        public async Task Desativar(Produto produto)
+        {
+
+            var buscaProduto = _produtoRepository.FilterBy(filter => filter.CodigoId == produto.CodigoId);
+
+            if (buscaProduto == null) throw new ApplicationException("Não é possível desativar um produto que não existe");
+
+            var produtoCollection = _mapper.Map<ProdutoCollection>(produto);
+
+            produtoCollection.Id = buscaProduto.FirstOrDefault().Id;
+
+            await _produtoRepository.ReplaceOneAsync(produtoCollection);
+        }
+
+        public async Task Reativar(Produto produto)
+        {
+
+            var buscaProduto = _produtoRepository.FilterBy(filter => filter.CodigoId == produto.CodigoId);
+
+            if (buscaProduto == null) throw new ApplicationException("Não é possível reativar um produto que não existe");
+
+            var produtoCollection = _mapper.Map<ProdutoCollection>(produto);
+
+            produtoCollection.Id = buscaProduto.FirstOrDefault().Id;
+
+            await _produtoRepository.ReplaceOneAsync(produtoCollection);
+        }
+
+        public Task<IEnumerable<Produto>> ObterPorCategoria(int codigo)
         {
             throw new NotImplementedException();
         }
 
-        public void Atualizar(Produto produto)
+        public IEnumerable<Produto> ObterPorNome(string nome)
         {
-            throw new NotImplementedException();
+            var buscaProduto = _produtoRepository.FilterBy(filter => filter.Nome == nome);
+
+            var produto = _mapper.Map<IEnumerable<Produto>>(buscaProduto.All(filter => filter.Nome == nome));
+
+            return _mapper.Map<IEnumerable<Produto>>(produto);
         }
 
-        public Produto ObterProdutoPorId(int id)
+        public Task<Produto> ObterPorId(Guid id)
         {
-            throw new NotImplementedException();
+            var buscaProduto = _produtoRepository.FilterBy(filter => filter.CodigoId == id);
+
+            var produto = _mapper.Map<Task<Produto>>(buscaProduto.FirstOrDefault());
+
+            return produto;
         }
 
-        public IList<Produto> ObterTodosProdutos()
+        public IEnumerable<Produto> ObterTodos()
         {
-            throw new NotImplementedException();
-        }
+            var produtoList = _produtoRepository.FilterBy(filter => true);
 
-        public void ReativarProduto()
-        {
-            throw new NotImplementedException();
-        }
-        #endregion
+            return _mapper.Map<IEnumerable<Produto>>(produtoList);
 
-        #region - Funções do arquivo
-        private List<Produto> LerProdutosDoArquivo()
-        {
-            if (!System.IO.File.Exists(_produtoCaminhoArquivo))
-            {
-                return new List<Produto>();
-            }
-
-            string json = System.IO.File.ReadAllText(_produtoCaminhoArquivo);
-            return JsonConvert.DeserializeObject<List<Produto>>(json);
-        }
-
-        private int ObterProximoCodigoDisponivel()
-        {
-            List<Produto> produtos = LerProdutosDoArquivo();
-            if (produtos.Any())
-            {
-                return produtos.Max(p => p.Codigo) + 1;
-            }
-            else
-            {
-                return 1;
-            }
-        }
-
-        private void EscreverProdutosNoArquivo(List<Produto> produtos)
-        {
-            string json = JsonConvert.SerializeObject(produtos);
-            System.IO.File.WriteAllText(_produtoCaminhoArquivo, json);
         }
 
         #endregion

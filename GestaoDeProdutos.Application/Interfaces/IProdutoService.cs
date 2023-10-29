@@ -9,11 +9,15 @@ namespace GestaoDeProdutos.Application.Interfaces
 {
     public interface IProdutoService
     {
-        public void AdicionarProduto(NovoProdutoViewModel produto);
-        public void Atualizar(ProdutoViewModel produto);
-        public IList<ProdutoViewModel> ObterTodosProdutos();
-        public ProdutoViewModel ObterProdutoPorId(int id);
-        public void AtivarProduto();
-        public void ReativarProduto();
+        IEnumerable<ProdutoViewModel> ObterTodos();
+        IEnumerable<ProdutoViewModel> ObterPorNome(string nome);
+        Task<ProdutoViewModel> ObterPorId(Guid id);
+        Task<IEnumerable<ProdutoViewModel>> ObterPorCategoria(int codigo);
+        Task Adicionar(NovoProdutoViewModel produto);
+        Task Atualizar(Guid id, AtualizarProdutoViewModel produto);
+        Task AlterarPreco(Guid id, decimal valor);
+        Task AtualizarEstoque(Guid id, int quantidade);
+        Task Desativar(Guid id);
+        Task Reativar(Guid id);
     }
 }

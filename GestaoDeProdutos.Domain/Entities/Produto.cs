@@ -6,49 +6,82 @@ using System.Threading.Tasks;
 
 namespace GestaoDeProdutos.Domain.Entities
 {
-    public class Produto
+    public class Produto : EntidadeBase
     {
-        #region - Propriedades
+        #region 1 - Contrutores
 
-        public int Codigo { get; private set; }
-        public string Nome { get; private set; }
-        public int Estoque { get; private set; }
-        public decimal Valor { get; private set; }
-        public bool Ativo { get; private set; }
-        public DateTime DataCadastro { get; private set; }
-
-        #endregion
-
-        #region - Construtores
-
-        public Produto(int codigo, string nome, int estoque, decimal valor, bool ativo, DateTime dataCadastro)
+        public Produto(string nome, string descricao, decimal valor, string imagem, int quantidadeEstoque)
         {
-            Codigo = codigo;
             Nome = nome;
-            Estoque = estoque;
+            Descricao = descricao;
             Valor = valor;
+            Imagem = imagem;
+            QuantidadeEstoque = quantidadeEstoque;
+        }
+
+        public Produto(string nome, string descricao, bool ativo, decimal valor, DateTime dataCadastro, string imagem, int quantidadeEstoque)
+        {
+            Nome = nome;
+            Descricao = descricao;
             Ativo = ativo;
+            Valor = valor;
             DataCadastro = dataCadastro;
+            Imagem = imagem;
+            QuantidadeEstoque = quantidadeEstoque;
+        }
+
+        public Produto(Guid codigoId, string nome, string descricao, bool ativo, decimal valor, DateTime dataCadastro, string imagem, int quantidadeEstoque)
+        {
+            CodigoId = codigoId;
+            Nome = nome;
+            Descricao = descricao;
+            Ativo = ativo;
+            Valor = valor;
+            DataCadastro = dataCadastro;
+            Imagem = imagem;
+            QuantidadeEstoque = quantidadeEstoque;
         }
 
         #endregion
 
-        #region - Comportamentos
+        #region 2 - Propriedades
 
-        public void AdicionarEstoque(int qtdEstoque)
+        public string Nome { get; private set; }
+        public string Descricao { get; private set; }
+        public bool Ativo { get; private set; }
+        public decimal Valor { get; private set; }
+        public DateTime DataCadastro { get; private set; }
+        public string Imagem { get; private set; }
+        public int QuantidadeEstoque { get; private set; }
+        public Guid CategoriaID { get; private set; }
+
+        #endregion
+
+        #region 3 - Comportamentos
+
+        public void Reativar() => Ativo = true;
+        public void Desativar() => Ativo = false;
+        public void AlterarDescricao(string descricao) => Descricao = descricao;
+        public void AlterarPreco(Decimal valor) => Valor = valor;
+        public void AlterarProduto(Produto produto)
         {
-            Estoque *= qtdEstoque;
+            Nome = produto.Nome;
+            Descricao = produto.Descricao;
+            Valor = produto.Valor;
+            Imagem = produto.Imagem;
+            QuantidadeEstoque = produto.QuantidadeEstoque;
         }
-
-        public void BaixarEstoque(int qtdEstoque)
+        public void AlterarCategoria(Guid categoriaID) => CategoriaID = categoriaID;
+        public void DebitarEstoque(int quantidade)
         {
-            Estoque -= qtdEstoque;
+            if (!PossuiEstoque(quantidade)) throw new Exception("Estoque insuficiente");
+            QuantidadeEstoque -= quantidade;
         }
-
-        public void AtivarProduto() => Ativo = true;
-        public void DesativarProduto() => Ativo = false;
-
-        public void AlterarNome(string novoNome) => Nome = novoNome;
+        public void ReporEstoque(int quantidade)
+        {
+            QuantidadeEstoque += quantidade;
+        }
+        public bool PossuiEstoque(int quantidade) => QuantidadeEstoque >= quantidade;
 
         #endregion
     }

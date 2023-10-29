@@ -13,7 +13,7 @@ namespace GestaoDeProdutos.Application.Services
 {
     public class CategoriaService : ICategoriaService
     {
-        #region Construtores
+        #region - Construtores
 
         private readonly ICategoriaRepository _categoriaRepository;
         private IMapper _mapper;
@@ -26,48 +26,31 @@ namespace GestaoDeProdutos.Application.Services
 
         #endregion
 
-        #region Funções
+        #region - Funções
 
-        public bool AdicionarCategoria(NovaCategoriaViewModel categoria)
+        public async Task Adicionar(NovaCategoriaViewModel categoriaViewModel)
         {
-            try
-            {
-                var novaCategoria = _mapper.Map<Categoria>(categoria);
-                _categoriaRepository.AdicionarCategoria(novaCategoria);
-                return true;
-            }
-            catch{ return false; }    
+            var novaCategoria = _mapper.Map<Categoria>(categoriaViewModel);
+
+            Categoria categoria = new Categoria(categoriaViewModel.Descricao, categoriaViewModel.Ativo);
+
+            await _categoriaRepository.Adicionar(categoria);
         }
 
-        public bool AtualizarCategoria(CategoriaViewModel categoria, int id)
+        public void Atualizar(NovaCategoriaViewModel categoriaViewModel)
         {
-            try
-            {
-                var categoriaAtualizada = _mapper.Map<Categoria>(categoria);
-                _categoriaRepository.AtualizarCategoria(categoriaAtualizada, id);
-                return true;
-            }
-            catch { return false; }
+            throw new NotImplementedException();
         }
 
-        public CategoriaViewModel ObterCategoriaPorId(int id)
+        public Task<CategoriaViewModel> ObterPorId(Guid id)
         {
-            return _mapper.Map<CategoriaViewModel>(_categoriaRepository.ObterCategoriaPorId(id));
+            throw new NotImplementedException();
         }
 
-        public List<CategoriaViewModel> ObterTodasCategorias()
+        public IEnumerable<CategoriaViewModel> ObterTodas()
         {
-            return _mapper.Map<List<CategoriaViewModel>>(_categoriaRepository.ObterTodasCategorias());
-        }
+            return _mapper.Map<IEnumerable<CategoriaViewModel>>(_categoriaRepository.ObterTodas());
 
-        public bool RemoverCategoria(int id)
-        {
-            try
-            {
-                _categoriaRepository.RemoverCategoria(id);
-                return true;
-            }
-            catch { return false; }       
         }
 
         #endregion

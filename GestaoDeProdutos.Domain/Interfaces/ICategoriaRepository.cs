@@ -9,10 +9,10 @@ namespace GestaoDeProdutos.Domain.Interfaces
 {
     public interface ICategoriaRepository
     {
-        public void AdicionarCategoria(Categoria categoria);
-        public void AtualizarCategoria(Categoria categoria, int id);
-        public void RemoverCategoria(int id);
-        public List<Categoria> ObterTodasCategorias();
-        public Categoria ObterCategoriaPorId(int id);
+        IEnumerable<Categoria> ObterTodas();
+        Task<Categoria> ObterPorId(Guid id);
+        Task Adicionar(Categoria categoria);
+        Task Desativar(Categoria categoria);
+        void Atualizar(Categoria categoria);
     }
 }

@@ -1,4 +1,7 @@
-﻿using GestaoDeProdutos.Domain.Entities;
+﻿using AutoMapper;
+using GestaoDeProduto.Data.Providers.MongoDb.Collections;
+using GestaoDeProduto.Data.Providers.MongoDb.Interfaces;
+using GestaoDeProdutos.Domain.Entities;
 using GestaoDeProdutos.Domain.Interfaces;
 using Microsoft.Win32;
 using Newtonsoft.Json;
@@ -12,123 +15,49 @@ namespace GestaoDeProduto.Data.Repositories
 {
     public class CategoriaRepository : ICategoriaRepository
     {
-        #region - Atributos e Construtor
+        private readonly IMongoRepository<CategoriaCollection> _categoriaRepository;
+        private readonly IMapper _mapper;
 
-        private readonly string _categoriaCaminhoArquivo;
+        #region - Construtores
 
-        public CategoriaRepository()
+        public CategoriaRepository(IMongoRepository<CategoriaCollection> categoriaRepository, IMapper mapper)
         {
-            _categoriaCaminhoArquivo = Path.Combine(Directory.GetCurrentDirectory(), "FileJsonData", "categoria.json");
+            _categoriaRepository = categoriaRepository;
+            _mapper = mapper;
         }
 
         #endregion
 
-        #region - Funções de repositorio
+        #region - Funções
 
-        public void AdicionarCategoria(Categoria novaCategoria)
+        public async Task Adicionar(Categoria categoria)
         {
-            List<Categoria> categorias = LerCategoriasDoArquivo();
-
-            int proximoCodigo = ObterProximoCodigoDisponivel();
-
-            Categoria categoria = new Categoria()
-            {
-                Codigo = proximoCodigo,
-                Descricao = novaCategoria.Descricao
-            };
-
-            categorias.Add(categoria);
-            EscreveCategoriasNoArquivo(categorias);
+            await _categoriaRepository.InsertOneAsync(_mapper.Map<CategoriaCollection>(categoria));
         }
 
-        public void AtualizarCategoria(Categoria categoria, int id)
+        public void Atualizar(Categoria categoria)
         {
-            List<Categoria> categorias = LerCategoriasDoArquivo();
-
-            int index = categorias.FindIndex(c => c.Codigo == id);
-            if (index != -1)
-            {
-                Categoria categoriaAtualizada = new Categoria()
-                {
-                    Codigo = categoria.Codigo,
-                    Descricao = categoria.Descricao
-                };
-
-                categorias[index] = categoriaAtualizada;
-                EscreveCategoriasNoArquivo(categorias);
-            }
+            throw new NotImplementedException();
         }
 
-        public void RemoverCategoria(int id)
+        public Task Desativar(Categoria categoria)
         {
-            List<Categoria> categorias = LerCategoriasDoArquivo();
-
-            if (categorias.Any())
-            {
-                Categoria categoriaDescartada = categorias.Find(c => c.Codigo == id);
-                if (categoriaDescartada != null)
-                {
-                    categorias.Remove(categoriaDescartada);
-                    EscreveCategoriasNoArquivo(categorias);
-                }
-            }
+            throw new NotImplementedException();
         }
 
-        public List<Categoria> ObterTodasCategorias()
+        public async Task<Categoria> ObterPorId(Guid id)
         {
-            List<Categoria> categorias = LerCategoriasDoArquivo();
-            return categorias;
+            var buscaCategoria = _categoriaRepository.FilterBy(filter => filter.CodigoId == id);
+
+            return _mapper.Map<Categoria>(buscaCategoria.FirstOrDefault());
+
         }
 
-        public Categoria ObterCategoriaPorId(int id)
+        public IEnumerable<Categoria> ObterTodas()
         {
-            List<Categoria> categorias = LerCategoriasDoArquivo();
+            var categoriaList = _categoriaRepository.FilterBy(filter => true);
 
-            if (!categorias.Any())
-            {
-                return null; 
-            }
-
-            Categoria categoriaProcurada = categorias.Find(c => c.Codigo == id);
-            if (categoriaProcurada == null)
-            {
-                return null;
-            }
-
-            return categoriaProcurada;
-        }
-
-        #endregion
-
-        #region - Funções do arquivo
-        private List<Categoria> LerCategoriasDoArquivo()
-        {
-            if (!System.IO.File.Exists(_categoriaCaminhoArquivo))
-            {
-                return new List<Categoria>();
-            }
-
-            string json = System.IO.File.ReadAllText(_categoriaCaminhoArquivo);
-            return JsonConvert.DeserializeObject<List<Categoria>>(json);
-        }
-
-        private int ObterProximoCodigoDisponivel()
-        {
-            List<Categoria> categorias = LerCategoriasDoArquivo();
-            if (categorias.Any())
-            {
-                return categorias.Max(p => p.Codigo) + 1;
-            }
-            else
-            {
-                return 1;
-            }
-        }
-
-        private void EscreveCategoriasNoArquivo(List<Categoria> categoria)
-        {
-            string json = JsonConvert.SerializeObject(categoria);
-            System.IO.File.WriteAllText(_categoriaCaminhoArquivo, json);
+            return _mapper.Map<IEnumerable<Categoria>>(categoriaList);
         }
 
         #endregion

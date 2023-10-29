@@ -4,6 +4,11 @@ using GestaoDeProdutos.Application.Services;
 using GestaoDeProdutos.Domain.Interfaces;
 using AutoMapper;
 using GestaoDeProdutos.Application.AutoMapper;
+using GestaoDeProduto.Data.Providers.MongoDb.Configuration;
+using GestaoDeProduto.Data.Providers.MongoDb.Interfaces;
+using Microsoft.Extensions.Options;
+using GestaoDeProduto.Data.AutoMapper;
+using GestaoDeProduto.Data.Providers.MongoDb;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,7 +19,19 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.Configure<MongoDbSettings>(
+    builder.Configuration.GetSection("MongoDbSettings"));
+
+builder.Services.AddSingleton<IMongoDbSettings>(serviceProvider =>
+       serviceProvider.GetRequiredService<IOptions<MongoDbSettings>>().Value);
+
 builder.Services.AddAutoMapper(typeof(DomainToApplication), typeof(ApplicationToDomain));
+builder.Services.AddAutoMapper(typeof(DomainToCollection), typeof(CollectionToDomain));
+
+builder.Services.AddScoped(typeof(IMongoRepository<>), typeof(MongoRepository<>));
+
+builder.Services.AddScoped<IProdutoRepository, ProdutoRepository>();
+builder.Services.AddScoped<IProdutoService, ProdutoService>();
 
 builder.Services.AddScoped<IProdutoRepository, ProdutoRepository>();
 builder.Services.AddScoped<IProdutoService, ProdutoService>();
@@ -22,8 +39,8 @@ builder.Services.AddScoped<IProdutoService, ProdutoService>();
 builder.Services.AddScoped<ICategoriaRepository, CategoriaRepository>();
 builder.Services.AddScoped<ICategoriaService, CategoriaService>();
 
-builder.Services.AddScoped<IFornecedorRepository, FornecedorRepository>();
-builder.Services.AddScoped<IFornecedorService, FornecedorService>();
+//builder.Services.AddScoped<IFornecedorRepository, FornecedorRepository>();
+//builder.Services.AddScoped<IFornecedorService, FornecedorService>();
 
 var app = builder.Build();
 
