@@ -24,6 +24,10 @@ namespace GestaoDeProdutos.Application.ViewModels
         public string Imagem { get; set; }
         public int QuantidadeEstoque { get; set; }
 
+        [JsonIgnore]
+        public int EstoqueMinimo { get; set; }
+
+
         #endregion
     }
 }

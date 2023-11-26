@@ -16,6 +16,7 @@ namespace GestaoDeProduto.Data.AutoMapper
 		{
 			CreateMap<Produto, ProdutoCollection>();
 			CreateMap<Categoria, CategoriaCollection>();
+			CreateMap<Fornecedor, FornecedorCollection>();
 		}
 	}
 }

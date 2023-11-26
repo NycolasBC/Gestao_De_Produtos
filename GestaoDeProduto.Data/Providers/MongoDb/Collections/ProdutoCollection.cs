@@ -9,9 +9,8 @@ namespace GestaoDeProduto.Data.Providers.MongoDb.Collections
 	[BsonCollection("Produto")]
 	public class ProdutoCollection : Document
 	{
-
-
 		#region 2 - Propriedades
+
 		public Guid CodigoId { get; set; }
 		public Guid CategoriaId { get; set; }
 		public string Nome { get;  set; }
@@ -21,6 +20,7 @@ namespace GestaoDeProduto.Data.Providers.MongoDb.Collections
 		public DateTime DataCadastro { get;  set; }
 		public string Imagem { get;  set; }
 		public int QuantidadeEstoque { get;  set; }
+		public int EstoqueMinimo { get; set; }
 
 		#endregion
 

@@ -8,7 +8,7 @@ namespace GestaoDeProdutos.Domain.Entities
 {
     public class Categoria : EntidadeBase
     {
-        #region construtor
+        #region 1 - Construtor
 
         public Categoria(string descricao, bool ativo)
         {
@@ -25,14 +25,14 @@ namespace GestaoDeProdutos.Domain.Entities
 
         #endregion
 
-        #region propriedades
+        #region 2 - Propriedades
 
         public string Descricao { get; private set; }
         public bool Ativo { get; private set; }
 
         #endregion
 
-        #region comportamentos
+        #region 3 - Comportamentos
 
         public void AlterarDescricao(string descricao) => Descricao = descricao;
         public void Ativar() => Ativo = true;

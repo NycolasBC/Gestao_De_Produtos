@@ -3,6 +3,8 @@ using GestaoDeProdutos.Application.Interfaces;
 using GestaoDeProdutos.Application.ViewModels;
 using GestaoDeProdutos.Domain.Entities;
 using GestaoDeProdutos.Domain.Interfaces;
+using GestaoDeProdutos.Infra.EmailService;
+using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -17,11 +19,13 @@ namespace GestaoDeProdutos.Application.Services
         #region - Construtores
 
         private readonly IProdutoRepository _produtoRepository;
+        private readonly EmailConfig _emailConfig;
         private IMapper _mapper;
 
-        public ProdutoService(IProdutoRepository produtoRepository, IMapper mapper)
+        public ProdutoService(IProdutoRepository produtoRepository, IOptions<EmailConfig> options, IMapper mapper)
         {
             _produtoRepository = produtoRepository;
+            _emailConfig = options.Value;
             _mapper = mapper;
         }
 
@@ -32,9 +36,6 @@ namespace GestaoDeProdutos.Application.Services
         public async Task Adicionar(NovoProdutoViewModel novoProdutoViewModel)
         {
             var novoProduto = _mapper.Map<Produto>(novoProdutoViewModel);
-
-            Produto p = new Produto(novoProdutoViewModel.Descricao, novoProdutoViewModel.Descricao, novoProdutoViewModel.Ativo, novoProdutoViewModel.Valor, novoProdutoViewModel.DataCadastro, novoProdutoViewModel.Imagem, novoProdutoViewModel.QuantidadeEstoque);
-
             await _produtoRepository.Adicionar(novoProduto);
 
         }
@@ -85,6 +86,11 @@ namespace GestaoDeProdutos.Application.Services
 
             await _produtoRepository.AtualizarEstoque(buscaProduto);
 
+            if (buscaProduto.VeririficaEstoqueMinimo())
+            {
+                EnviarEmailEstoqueBaixo(buscaProduto);
+            }
+
         }
 
         public async Task Desativar(Guid id)
@@ -132,5 +138,17 @@ namespace GestaoDeProdutos.Application.Services
         }
 
         #endregion
+
+
+        private void EnviarEmailEstoqueBaixo(Produto produto)
+        {
+            string assunto = "Teste E-mail";
+            string corpoEmailModelo = $"Olá Comprador(a), o produto {produto.Nome} está abaixo do estoque mínimo {produto.EstoqueMinimo} " +
+                "definido no sistema, logo, você precisa avaliar se é necessário realizar um novo pedido de compra";
+            string emailDestino = "1bertomelo@gmail.com";
+
+            if (!string.IsNullOrEmpty(emailDestino))
+                Email.Enviar(assunto, corpoEmailModelo, emailDestino, _emailConfig);
+        }
     }
 }

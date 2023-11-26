@@ -16,10 +16,10 @@ namespace GestaoDeProdutos.Application.AutoMapper
             #region - Produto
 
             CreateMap<ProdutoViewModel, Produto>()
-               .ConstructUsing(q => new Produto(q.Nome, q.Descricao, q.Ativo, q.Valor, q.DataCadastro, q.Imagem, q.QuantidadeEstoque));
+               .ConstructUsing(q => new Produto(q.Nome, q.Descricao, q.Ativo, q.Valor, q.DataCadastro, q.Imagem, q.QuantidadeEstoque, q.EstoqueMinimo));
 
             CreateMap<NovoProdutoViewModel, Produto>()
-               .ConstructUsing(q => new Produto(q.Nome, q.Descricao, q.Ativo, q.Valor, q.DataCadastro, q.Imagem, q.QuantidadeEstoque));
+               .ConstructUsing(q => new Produto(q.Nome, q.Descricao, q.Ativo, q.Valor, q.DataCadastro, q.Imagem, q.QuantidadeEstoque, 3));
 
             CreateMap<AtualizarProdutoViewModel, Produto>()
                .ConstructUsing(q => new Produto(q.Nome, q.Descricao, q.Valor, q.Imagem, q.QuantidadeEstoque));
@@ -38,11 +38,11 @@ namespace GestaoDeProdutos.Application.AutoMapper
 
             #region - Fornecedor
 
-            //CreateMap<FornecedorViewModel, Fornecedor>()
-            //        .ConstructUsing(f => new Fornecedor(f.Nome, f.RazaoSocial, f.CNPJ, f.Ativo, f.DataCadastro, f.EmailContato));
+            CreateMap<FornecedorViewModel, Fornecedor>()
+                    .ConstructUsing(f => new Fornecedor(f.CodigoId, f.Nome, f.RazaoSocial, f.CNPJ, f.DataCadastro, f.Ativo));
 
-            //CreateMap<NovoFornecedorViewModel, Fornecedor>()
-            //        .ConstructUsing(f => new Fornecedor(f.Nome, f.RazaoSocial, f.CNPJ, f.Ativo, f.DataCadastro, f.EmailContato));
+            CreateMap<NovoFornecedorViewModel, Fornecedor>()
+                    .ConstructUsing(f => new Fornecedor(f.Nome, f.RazaoSocial, f.CNPJ, DateTime.Now, true));
 
             #endregion
         }

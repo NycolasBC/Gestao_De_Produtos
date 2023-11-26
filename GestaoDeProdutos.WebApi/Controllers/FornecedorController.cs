@@ -1,123 +1,125 @@
-﻿//using GestaoDeProdutos.Application.Interfaces;
-//using GestaoDeProdutos.Application.ViewModels;
-//using Microsoft.AspNetCore.Mvc;
+﻿using GestaoDeProdutos.Application.Interfaces;
+using GestaoDeProdutos.Application.Services;
+using GestaoDeProdutos.Application.ViewModels;
+using Microsoft.AspNetCore.Mvc;
 
-//namespace GestaoDeProdutos.WebApi.Controllers
-//{
-//    [ApiController]
-//    [Route("[Controller]")]
-//    public class FornecedorController : ControllerBase
-//    {
-//        #region - Propriedades e Construtores
+namespace GestaoDeProdutos.WebApi.Controllers
+{
+    [ApiController]
+    [Route("[Controller]")]
+    public class FornecedorController : ControllerBase
+    {
+        #region - Propriedades e Construtores
 
-//        private readonly IFornecedorService _fornecedorService;
+        private readonly IFornecedorService _fornecedorService;
 
-//        public FornecedorController(IFornecedorService fornecedorService)
-//        {
-//            _fornecedorService = fornecedorService;
-//        }
+        public FornecedorController(IFornecedorService fornecedorService)
+        {
+            _fornecedorService = fornecedorService;
+        }
 
-//        #endregion
+        #endregion
 
-//        #region - CRUD
+        #region - CRUD
 
-//        [HttpGet(Name = "BuscarFornecedores")]
-//        public IActionResult Get()
-//        {
-//            try
-//            {
-//                return Ok(_fornecedorService.ObterTodosFornecedores());
-//            }
-//            catch
-//            {
-//                return BadRequest("Nenhum fornecedor salva");
-//            }
-//        }
+        #region GET
 
-
-//        [HttpGet("{id}", Name = "BuscarFornecedoresPorId")]
-//        public IActionResult Get(int id)
-//        {
-//            try
-//            {
-//                return Ok(_fornecedorService.ObterFornecedorPorId(id));
-//            }
-//            catch
-//            {
-//                return BadRequest("Nenhuma categoria salva");
-//            }
-//        }
+        [HttpGet("obtertodos")]
+        public IActionResult Get()
+        {
+            try
+            {
+                return Ok(_fornecedorService.ObterTodos());
+            }
+            catch
+            {
+                return BadRequest("Nenhum fornecedor encontrado");
+            }
+        }
 
 
-//        [HttpPost(Name = "AdicionarFornecedor")]
-//        public IActionResult Post([FromBody] NovoFornecedorViewModel novoFornecedorViewModel)
-//        {
-//            try
-//            {
-//                var adicionadoComSucesso = _fornecedorService.AdicionarFornecedor(novoFornecedorViewModel);
-
-//                if (adicionadoComSucesso)
-//                {
-//                    return Ok("Fornecedor cadastrado com sucesso");
-//                }
-//                else
-//                {
-//                    return BadRequest("Houve um erro ao cadastrar o fornecedor");
-//                }
-//            }
-//            catch
-//            {
-//                return BadRequest("Houve um erro ao cadastrar o fornecedor");
-//            }
-
-//        }
+        [HttpGet("obterporid/{id}")]
+        public IActionResult GetPorId(Guid id)
+        {
+            try
+            {
+                return Ok(_fornecedorService.ObterPorId(id));
+            }
+            catch
+            {
+                return BadRequest("Nenhum fornecedor encontrado");
+            }
+        }
 
 
-//        [HttpPut("{id}", Name = "AtualizarFornecedor")]
-//        public IActionResult Put([FromBody] FornecedorViewModel fornecedorAtualizado, int id)
-//        {
-//            try
-//            {
-//                var atualizadoComSucesso = _fornecedorService.AtualizarFornecedor(fornecedorAtualizado, id);
-
-//                if (atualizadoComSucesso)
-//                {
-//                    return Ok("Fornecedor atualizado com sucesso");
-//                }
-//                else
-//                {
-//                    return BadRequest("Houve um erro ao atualizar o fornecedor");
-//                }
-//            }
-//            catch
-//            {
-//                return BadRequest("Houve um erro ao atualizar o fornecedor");
-//            }
-//        }
+        [HttpGet("obterpornome/{nome}")]
+        public IActionResult GetPorNome(string nome)
+        {
+            try
+            {
+                return Ok(_fornecedorService.ObterPorNome(nome));
+            }
+            catch
+            {
+                return BadRequest("Nenhum fornecedor encontrado");
+            }
+        }
 
 
-//        [HttpDelete("{id}", Name = "RemoverFornecedor")]
-//        public IActionResult Delete(int id)
-//        {
-//            try
-//            {
-//                var removidoComSucesso = _fornecedorService.RemoverFornecedor(id);
+        [HttpGet("obterporcnpj/{cnpj}")]
+        public IActionResult GetPorCnpj(string cnpj)
+        {
+            try
+            {
+                return Ok(_fornecedorService.ObterPorCnpj(cnpj));
+            }
+            catch
+            {
+                return BadRequest("Nenhum fornecedor encontrado");
+            }
+        }
 
-//                if (removidoComSucesso)
-//                {
-//                    return Ok("Fornecedor removido com sucesso");
-//                }
-//                else
-//                {
-//                    return BadRequest("Houve um erro ao remover o fornecedor");
-//                }
-//            }
-//            catch
-//            {
-//                return BadRequest("Houve um erro ao remover o fornecedor");
-//            }
-//        }
+        #endregion
 
-//        #endregion
-//    }
-//}
+
+        #region POST
+
+        [HttpPost("adicionar")]
+        public IActionResult Post([FromBody] NovoFornecedorViewModel novoFornecedorViewModel)
+        {
+            try
+            {
+                var adicionadoComSucesso = _fornecedorService.Adicionar(novoFornecedorViewModel);
+                return Ok("Fornecedor cadastrado com sucesso");
+            }
+            catch
+            {
+                return BadRequest("Houve um erro ao cadastrar o fornecedor");
+            }
+
+        }
+
+        #endregion
+
+
+        #region PUT
+
+        [HttpPut("atualizar/{id}")]
+        public IActionResult Put([FromBody] AtualizarFornecedorViewlModel fornecedorAtualizado, Guid id)
+        {
+            try
+            {
+                var atualizadoComSucesso = _fornecedorService.Atualizar(id, fornecedorAtualizado);
+                return Ok("Fornecedor atualizado com sucesso");
+            }
+            catch
+            {
+                return BadRequest("Houve um erro ao atualizar o fornecedor");
+            }
+        }
+
+        #endregion
+
+        #endregion
+    }
+}

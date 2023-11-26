@@ -1,47 +1,64 @@
-﻿//using System;
-//using System.Collections.Generic;
-//using System.Linq;
-//using System.Text;
-//using System.Threading.Tasks;
+﻿using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using static System.Net.Mime.MediaTypeNames;
 
-//namespace GestaoDeProdutos.Domain.Entities
-//{
-//    public class Fornecedor : EntidadeBase
-//    {
-//        #region - Propriedades
+namespace GestaoDeProdutos.Domain.Entities
+{
+    public class Fornecedor : EntidadeBase
+    {
+        #region 1 - Construtor
 
-//        public string Nome { get; set; }
-//        public string RazaoSocial { get; set; }
-//        public string CNPJ { get; set; }
-//        public bool Ativo { get; set; }
-//        public DateTime DataCadastro { get; set; }
-//        public string EmailContato { get; set; }
+        public Fornecedor(string nome, string cnpj, string razaoSocial, DateTime dataCadastro, bool ativo)
+        {
+            Nome = nome;
+            Cnpj = cnpj;
+            RazaoSocial = razaoSocial;
+            DataCadastro = dataCadastro;
+            Ativo = ativo;
+        }
 
-//        #endregion
+        public Fornecedor(Guid codigoId, string nome, string cnpj, string razaoSocial, DateTime dataCadastro, bool ativo)
+        {
+            CodigoId = codigoId;
+            Nome = nome;
+            Cnpj = cnpj;
+            RazaoSocial = razaoSocial;
+            DataCadastro = dataCadastro;
+            Ativo = ativo;
+        }
 
-//        #region Construtores
+        #endregion
 
-//        public Fornecedor(Guid codigoId, string nome, string razaoSocial, string cNPJ, bool ativo, DateTime dataCadastro, string emailContato)
-//        {
-//            CodigoId = codigoId;
-//            Nome = nome;
-//            RazaoSocial = razaoSocial;
-//            CNPJ = cNPJ;
-//            Ativo = ativo;
-//            DataCadastro = dataCadastro;
-//            EmailContato = emailContato;
-//        }
+        #region 2 - Propriedades
 
-//        public Fornecedor(string nome, string razaoSocial, string cNPJ, bool ativo, DateTime dataCadastro, string emailContato)
-//        {
-//            Nome = nome;
-//            RazaoSocial = razaoSocial;
-//            CNPJ = cNPJ;
-//            Ativo = ativo;
-//            DataCadastro = dataCadastro;
-//            EmailContato = emailContato;
-//        }
+        public string Nome { get; private set; }
+        public string Cnpj { get; private set; }
+        public string RazaoSocial { get; private set; }
+        public DateTime DataCadastro { get; private set; }
+        public bool Ativo { get; private set; }
 
-//        #endregion
-//    }
-//}
+
+        #endregion
+
+        #region 3 - Comportamentos
+
+        public void Alterar(Fornecedor fornecedor)
+        {
+            Nome = fornecedor.Nome;
+            Cnpj = fornecedor.Cnpj;
+            RazaoSocial = fornecedor.RazaoSocial;
+        }
+        public void Ativar() => Ativo = true;
+        public void Desativar() => Ativo = false;
+        public void AlterarNome(string nome) => Nome = nome;
+        public void AlterarRazaoSocial(string razaoSocial) => RazaoSocial = razaoSocial;
+        public void AlterarCNPJ(string cnpj) => Cnpj = cnpj;
+
+
+        #endregion
+    }
+}

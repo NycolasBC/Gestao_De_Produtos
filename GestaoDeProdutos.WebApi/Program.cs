@@ -9,6 +9,7 @@ using GestaoDeProduto.Data.Providers.MongoDb.Interfaces;
 using Microsoft.Extensions.Options;
 using GestaoDeProduto.Data.AutoMapper;
 using GestaoDeProduto.Data.Providers.MongoDb;
+using GestaoDeProdutos.Infra.EmailService;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -33,14 +34,13 @@ builder.Services.AddScoped(typeof(IMongoRepository<>), typeof(MongoRepository<>)
 builder.Services.AddScoped<IProdutoRepository, ProdutoRepository>();
 builder.Services.AddScoped<IProdutoService, ProdutoService>();
 
-builder.Services.AddScoped<IProdutoRepository, ProdutoRepository>();
-builder.Services.AddScoped<IProdutoService, ProdutoService>();
-
 builder.Services.AddScoped<ICategoriaRepository, CategoriaRepository>();
 builder.Services.AddScoped<ICategoriaService, CategoriaService>();
 
-//builder.Services.AddScoped<IFornecedorRepository, FornecedorRepository>();
-//builder.Services.AddScoped<IFornecedorService, FornecedorService>();
+builder.Services.AddScoped<IFornecedorRepository, FornecedorRepository>();
+builder.Services.AddScoped<IFornecedorService, FornecedorService>();
+
+builder.Services.Configure<EmailConfig>(builder.Configuration.GetSection("EmailConfig"));
 
 var app = builder.Build();
 

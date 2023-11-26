@@ -19,7 +19,7 @@ namespace GestaoDeProdutos.Domain.Entities
             QuantidadeEstoque = quantidadeEstoque;
         }
 
-        public Produto(string nome, string descricao, bool ativo, decimal valor, DateTime dataCadastro, string imagem, int quantidadeEstoque)
+        public Produto(string nome, string descricao, bool ativo, decimal valor, DateTime dataCadastro, string imagem, int quantidadeEstoque, int estoqueMinimo)
         {
             Nome = nome;
             Descricao = descricao;
@@ -28,9 +28,10 @@ namespace GestaoDeProdutos.Domain.Entities
             DataCadastro = dataCadastro;
             Imagem = imagem;
             QuantidadeEstoque = quantidadeEstoque;
+            EstoqueMinimo = estoqueMinimo;
         }
 
-        public Produto(Guid codigoId, string nome, string descricao, bool ativo, decimal valor, DateTime dataCadastro, string imagem, int quantidadeEstoque)
+        public Produto(Guid codigoId, string nome, string descricao, bool ativo, decimal valor, DateTime dataCadastro, string imagem, int quantidadeEstoque, int estoqueMinimo)
         {
             CodigoId = codigoId;
             Nome = nome;
@@ -40,6 +41,7 @@ namespace GestaoDeProdutos.Domain.Entities
             DataCadastro = dataCadastro;
             Imagem = imagem;
             QuantidadeEstoque = quantidadeEstoque;
+            EstoqueMinimo = estoqueMinimo;
         }
 
         #endregion
@@ -54,6 +56,7 @@ namespace GestaoDeProdutos.Domain.Entities
         public string Imagem { get; private set; }
         public int QuantidadeEstoque { get; private set; }
         public Guid CategoriaID { get; private set; }
+        public int EstoqueMinimo { get; private set; }
 
         #endregion
 
@@ -82,6 +85,7 @@ namespace GestaoDeProdutos.Domain.Entities
             QuantidadeEstoque += quantidade;
         }
         public bool PossuiEstoque(int quantidade) => QuantidadeEstoque >= quantidade;
+        public bool VeririficaEstoqueMinimo() => QuantidadeEstoque < EstoqueMinimo;
 
         #endregion
     }

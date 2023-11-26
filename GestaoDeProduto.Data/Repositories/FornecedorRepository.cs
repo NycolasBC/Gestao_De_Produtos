@@ -1,89 +1,110 @@
-﻿//using AutoMapper;
-//using GestaoDeProduto.Data.Providers.MongoDb.Collections;
-//using GestaoDeProduto.Data.Providers.MongoDb.Interfaces;
-//using GestaoDeProdutos.Domain.Entities;
-//using GestaoDeProdutos.Domain.Interfaces;
-//using Newtonsoft.Json;
-//using System;
-//using System.Collections.Generic;
-//using System.Linq;
-//using System.Text;
-//using System.Threading.Tasks;
+﻿using AutoMapper;
+using GestaoDeProduto.Data.Providers.MongoDb.Collections;
+using GestaoDeProduto.Data.Providers.MongoDb.Interfaces;
+using GestaoDeProdutos.Domain.Entities;
+using GestaoDeProdutos.Domain.Interfaces;
+using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-//namespace GestaoDeProduto.Data.Repositories
-//{
-//    public class FornecedorRepository : IFornecedorRepository
-//    {
-//        #region - Atributos e Construtor
+namespace GestaoDeProduto.Data.Repositories
+{
+    public class FornecedorRepository : IFornecedorRepository
+    {
+        #region - Atributos e Construtor
 
-//        private readonly IMongoRepository<FornecedorCollection> _fornecedorRepository;
-//        private readonly IMapper _mapper;
+        private readonly IMongoRepository<FornecedorCollection> _fornecedorRepository;
+        private readonly IMapper _mapper;
 
-//        public FornecedorRepository(IMongoRepository<FornecedorCollection> fornecedorRepository, IMapper mapper)
-//        {
-//            _fornecedorRepository = fornecedorRepository;
-//            _mapper = mapper;
-//        }
+        public FornecedorRepository(IMongoRepository<FornecedorCollection> fornecedorRepository, IMapper mapper)
+        {
+            _fornecedorRepository = fornecedorRepository;
+            _mapper = mapper;
+        }
 
-//        #endregion
+        #endregion
 
-//        #region - Funções de repositorio
+        #region - Métodos
 
-//        public void AdicionarFornecedor(Fornecedor fornecedor)
-//        {
-//            var novoFornecedorCollection = _mapper.Map<FornecedorCollection>(fornecedor);
-//            await _fornecedorRepository.InsertOneAsync(novoFornecedorCollection);
-//        }
+        public async Task Adicionar(Fornecedor fornecedor)
+        {
+            var novoFornecedorCollection = _mapper.Map<FornecedorCollection>(fornecedor);
+            await _fornecedorRepository.InsertOneAsync(novoFornecedorCollection);
+        }
 
-//        public void AtualizarFornecedor(Fornecedor fornecedor, int id)
-//        {
-//            List<Fornecedor> fornecedores = LerFornecedoresDoArquivo();
+        public async Task Atualizar(Fornecedor fornecedor)
+        {
+            var buscaFornecedor = _fornecedorRepository.FilterBy(filter => filter.CodigoId == fornecedor.CodigoId);
 
-//            int index = fornecedores.FindIndex(c => c.Codigo == id);
-//            if (index != -1)
-//            {
-//                Fornecedor fornecedorAtualizado = new Fornecedor()
-//                {
-//                    Codigo = id,
-//                    RazaoSocial = fornecedor.RazaoSocial,
-//                    CNPJ = fornecedor.CNPJ,
-//                    Ativo = fornecedor.Ativo,
-//                    DataCadastro = DateTime.Now,
-//                    EmailContato = fornecedor.EmailContato
-//                };
+            if (buscaFornecedor == null) throw new ApplicationException("Não é possível alterar um fornecedor que não existe");
 
-//                fornecedores[index] = fornecedorAtualizado;
-//                EscreveFornecedoresNoArquivo(fornecedores);
-//            }
-//        }
+            var fornecedorCollection = _mapper.Map<FornecedorCollection>(fornecedor);
 
-//        public void RemoverFornecedor(int id)
-//        {
-//            List<Fornecedor> fornecedor = LerFornecedoresDoArquivo();
+            fornecedorCollection.Id = buscaFornecedor.FirstOrDefault().Id;
 
-//            if (fornecedor.Any())
-//            {
-//                Fornecedor fornecedorDescartado = fornecedor.Find(c => c.Codigo == id);
-//                if (fornecedorDescartado != null)
-//                {
-//                    fornecedor.Remove(fornecedorDescartado);
-//                    EscreveFornecedoresNoArquivo(fornecedor);
-//                }
-//            }
-//        }
+            await _fornecedorRepository.ReplaceOneAsync(_mapper.Map<FornecedorCollection>(fornecedor));
+        }
 
-//        public IList<Fornecedor> ObterTodosFornecedores()
-//        {
-//            var listaDeFornecedores = _fornecedorRepository.FilterBy(filtro => true);
+        public async Task Remover(Fornecedor fornecedor)
+        {
+            throw new NotImplementedException();
+        }
 
-//            return _mapper.Map<IEnumerable<Fornecedor>>(listaDeFornecedores);
-//        }
+        public async Task<Fornecedor> ObterPorCnpj(string cnpj)
+        {
+            var fornecedorEncontradoPorCnpj = await _fornecedorRepository.FindOneAsync(filtro => filtro.Cnpj == cnpj);
+            return _mapper.Map<Fornecedor>(fornecedorEncontradoPorCnpj);
+        }
 
-//        public Fornecedor ObterFornecedorPorId(int id)
-//        {
-//            throw new NotImplementedException();
-//        }
+        public async Task<Fornecedor> ObterPorId(Guid id)
+        {
+            var fornecedorEncontradoPorId = await _fornecedorRepository.FindOneAsync(filtro => filtro.CodigoId == id);
+            return _mapper.Map<Fornecedor>(fornecedorEncontradoPorId);
+        }
 
-//        #endregion
-//    }
-//}
+        public async Task<Fornecedor> ObterPorNome(string nome)
+        {
+            FornecedorCollection fornecedorEncontradoPorNome = await _fornecedorRepository.FindOneAsync(filtro => filtro.Nome == nome);
+            return _mapper.Map<Fornecedor>(fornecedorEncontradoPorNome);
+        }
+
+        public async Task<IEnumerable<Fornecedor>> ObterTodos()
+        {
+            IEnumerable<FornecedorCollection>listaDeFornecedores = _fornecedorRepository.FilterBy(filtro => true);
+
+            return _mapper.Map<IEnumerable<Fornecedor>>(listaDeFornecedores);
+
+        }
+
+        public async Task Reativar(Fornecedor fornecedor)
+        {
+            var buscaFornencedor = _fornecedorRepository.FilterBy(filter => filter.CodigoId == fornecedor.CodigoId);
+
+            if (buscaFornencedor == null) throw new ApplicationException("Não é possível reativar um fornecedor que não existe");
+
+            var fornencedorCollection = _mapper.Map<FornecedorCollection>(fornecedor);
+
+            fornencedorCollection.Id = buscaFornencedor.FirstOrDefault().Id;
+
+            await _fornecedorRepository.ReplaceOneAsync(fornencedorCollection);
+        }
+
+        public async Task Desativar(Fornecedor fornecedor)
+        {
+            var buscaFornencedor = _fornecedorRepository.FilterBy(filter => filter.CodigoId == fornecedor.CodigoId);
+
+            if (buscaFornencedor == null) throw new ApplicationException("Não é possível reativar um fornecedor que não existe");
+
+            var fornencedorCollection = _mapper.Map<FornecedorCollection>(fornecedor);
+
+            fornencedorCollection.Id = buscaFornencedor.FirstOrDefault().Id;
+
+            await _fornecedorRepository.ReplaceOneAsync(fornencedorCollection);
+        }
+
+        #endregion
+    }
+}

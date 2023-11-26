@@ -19,6 +19,7 @@ namespace GestaoDeProdutos.Application.ViewModels
         public DateTime DataCadastro { get; set; }
         public string Imagem { get; set; }
         public int QuantidadeEstoque { get; set; }
+        public int EstoqueMinimo { get; set; }
 
         #endregion
     }

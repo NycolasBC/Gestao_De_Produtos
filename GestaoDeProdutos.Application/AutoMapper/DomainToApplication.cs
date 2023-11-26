@@ -14,13 +14,8 @@ namespace GestaoDeProdutos.Application.AutoMapper
         public DomainToApplication() 
         {
             CreateMap<Produto, ProdutoViewModel>();
-            CreateMap<Produto, AtualizarProdutoViewModel>();
-            CreateMap<Produto, NovoProdutoViewModel>();
-
             CreateMap<Categoria, CategoriaViewModel>();
-            CreateMap<Categoria, NovaCategoriaViewModel>();
-
-            //CreateMap<Fornecedor, FornecedorViewModel>();
+            CreateMap<Fornecedor, FornecedorViewModel>();
         }
     }
 }
